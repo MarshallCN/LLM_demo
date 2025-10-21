@@ -1,23 +1,26 @@
-# === Mistral 7B =========================
+# === Qwen 2.5 Coder 1.5B =========================
 import os
 os.environ["TORCHDYNAMO_DISABLE"] = "1"
 os.environ["TORCHINDUCTOR_DISABLE"] = "1"
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
-import gradio as gr
-from gradio.themes.utils import fonts
-from utils import render, trim_by_tokens, mk_msg_dir, _as_dir, msg2hist, persist_messages
-from pathlib import Path
-from datetime import datetime
-import json
-from typing import List, Dict, Tuple, Optional
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import logging
 for name in ("accelerate", "accelerate.utils", "accelerate.utils.modeling"):
     logging.getLogger(name).setLevel(logging.ERROR)
+    
+import gradio as gr
+from gradio.themes.utils import fonts
+import uuid
+from pathlib import Path
+import json
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from datetime import datetime, timezone
+from typing import List, Dict, Tuple, Optional
+from utils import render, trim_by_tokens, mk_msg_dir, _as_dir, msg2hist, persist_messages
+
 if gr.NO_RELOAD:
-    local_dir = r"C:\Users\c1052689\hug_models\Mistral7B_GPTQ"
-    tok = AutoTokenizer.from_pretrained(local_dir, use_fast=True, trust_remote_code=False)
-    model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=False)
+    local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5Coder1_5B_Instruct"
+    tok = AutoTokenizer.from_pretrained(local_dir, use_fast=True, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=True) #,torch_dtype=torch.bfloat16
     tok.pad_token = tok.eos_token
     tok.padding_side = "left"
     model.config.pad_token_id = tok.eos_token_id
@@ -30,18 +33,14 @@ GEN_BUDGET  = 256
 assistant_name = "Nova"; 
 user_name = "Marshall"
 persona = f"""
-<<SYS>>
-- Your name is {assistant_name}. Refer to yourself as "{assistant_name}".
-- The user's name is {user_name}. Address the user as "{user_name}" when appropriate.
-- Use British English and London timezone.
-- Do NOT prefix with "Q:" or "A:". Do NOT restate the user's question.
+- Your name is {assistant_name}.
+- The user's name is {user_name}.
+- Do NOT prefix with "Q:" or "A:"..
 - Output Markdown; code in fenced blocks with a language tag.
-- If info is missing, ask at most one clarifying question; otherwise make a reasonable assumption and state it.
-- Answer concisely.
-<</SYS>>
+- Answer concisely, but do return give empty feedback.
 """.strip()
-# Current length: 454
 # ===============================================================
+# from __future__ import annotations
 
 theme = gr.themes.Soft(
     font=[
@@ -63,14 +62,14 @@ css = """
 
 GEN_KWARGS = dict(
     do_sample=True,
-    temperature=0.7,
-    top_p=0.95,
-    repetition_penalty=1.07,
+    temperature=0.5,
+    top_p=0.9,
+    repetition_penalty=1.05,
     max_context=MAX_CONTEXT, 
     max_new_tokens=GEN_BUDGET
 )
 
-BASE_MSG_DIR = Path("./msgs/msgs_gptq") 
+BASE_MSG_DIR = Path("./msgs/msgs_Qwen") 
 
 # ============ Chat ============
 def chat_step(
@@ -79,7 +78,7 @@ def chat_step(
     tok,                      # AutoTokenizer
     messages: Optional[List[Dict[str, str]]] = None,
     mode: str = "continue",   # "new" | "continue" | "load"
-    persona: Optional[str] = None,  # 新开会话时需要，需包含 <<SYS>>…<</SYS>>
+    persona: Optional[str] = None,  # 新开会话时需要，
     max_context: int = 8192,
     max_new_tokens: int = 256,
     store_dir: str | Path = "./msgs",
@@ -94,14 +93,14 @@ def chat_step(
 
     if mode == "new":
         if not persona:
-            raise ValueError("mode='new' 时必须提供 persona（含 <<SYS>>…<</SYS>>）")
-        messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
+            raise ValueError("mode='new' 时必须提供 persona")
+        messages = [{"role": "system", "content": persona}, {"role": "user", "content": user_prompt.strip()}]
 
     elif mode == "continue":
         if not messages:
             if persona:
                 # 没有现成会话但给了 persona，则视作新会话
-                messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
+                messages = [{"role": "system", "content": persona}, {"role": "user", "content": user_prompt.strip()}]
                 mode = "new"
             else:
                 raise ValueError("mode='continue' 需要传入非空 messages，或改用 mode='new' 并提供 persona")
@@ -113,7 +112,7 @@ def chat_step(
         if not messages:
             if not persona:
                 raise ValueError("磁盘没有可加载的会话，且未提供 persona 以新建。")
-            messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
+            messages = [{"role": "system", "content": persona}, {"role": "user", "content": user_prompt.strip()}]
             mode = "new"   # 实际上是新开
         else:
             messages.append({"role": "user", "content": user_prompt})
@@ -136,7 +135,7 @@ def chat_step(
     messages = trim_by_tokens(tok, messages, prompt_budget)
 
     return reply, messages, mode
-    
+
 # ============ UI ============
 
 def ui_submit(user_input, messages, msg_id, sessions):
@@ -175,8 +174,8 @@ def ui_submit(user_input, messages, msg_id, sessions):
             **GEN_KWARGS,
         )
 
-    msg_dir = _as_dir(BASE_MSG_DIR, msg_id)
-    if msg_dir:
+    if len(messages)>0:
+        msg_dir = _as_dir(BASE_MSG_DIR, msg_id)
         persist_messages(messages, msg_dir, archive_last_turn=True)
 
     chat_history = (chat_history or []) + [
@@ -202,6 +201,7 @@ def _init_sessions():
         chat_history = msg2hist(persona, messages)
         sessions_update = gr.update(choices=sessions, value=msg_id)
         return sessions_update, sessions, msg_id, messages, chat_history
+            
 
 def load_session(session_list, sessions):
     msg_id = session_list   # session_list is the selected msg_id in UI
@@ -217,7 +217,7 @@ def start_new_session(sessions):
     return [], [], "", msg_id, sessions_update, sessions  # 返回ID
 
 with gr.Blocks(theme=theme, css=css) as demo:
-    gr.Markdown("## 🗨️ Mistral Chat")
+    gr.Markdown("## 🧠 Qwen Chat")
 
     with gr.Row():
         with gr.Column(scale=3):

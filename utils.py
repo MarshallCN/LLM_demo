@@ -1,10 +1,29 @@
 # from __future__ import annotations
 from pathlib import Path
+import uuid
 from datetime import datetime, timezone
 import json, os
 from typing import List, Dict, Tuple, Optional
 
 # ============ 工具函数 ============
+def mk_msg_dir(BASE_MSG_DIR) -> str:
+    m_id = datetime.now().strftime("%Y%m%d-%H%M%S-") + uuid.uuid4().hex[:6]
+    Path(BASE_MSG_DIR, m_id).mkdir(parents=True, exist_ok=True)
+    return m_id  # 只返回 ID
+
+def _as_dir(BASE_MSG_DIR, m_id: str) -> str:
+    # 统一把传入值规整为 ./msgs/<ID>
+    return Path(BASE_MSG_DIR, m_id)
+
+def msg2hist(persona, msg):
+    chat_history = []
+    if msg != None:
+        if len(msg)>0:
+            chat_history = msg.copy()                 # 外层列表浅拷
+            chat_history[0] = msg[0].copy()           # 这个字典单独拷
+            chat_history[0]['content'] = chat_history[0]['content'][len(persona):]
+    return chat_history
+        
 def render(tok, messages: List[Dict[str, str]]) -> str:
     """按 chat_template 渲染成最终提示词文本（不分词）。"""
     return tok.apply_chat_template(messages, tokenize=False)
@@ -27,7 +46,7 @@ def trim_by_tokens(tok, messages, prompt_budget):
     if not messages:
         return []
 
-    _ensure_alternating(messages)
+    # _ensure_alternating(messages)
 
     # 只有 persona 这一条时，直接返回
     if len(messages) == 1:
@@ -98,73 +117,6 @@ class MsgStore:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
             f.flush(); os.fsync(f.fileno())
 
-# ============ Chat ============
-def chat_step(
-    user_prompt: str,
-    pipe,                     # transformers.pipeline
-    tok,                      # AutoTokenizer
-    messages: Optional[List[Dict[str, str]]] = None,
-    mode: str = "continue",   # "new" | "continue" | "load"
-    persona: Optional[str] = None,  # 新开会话时需要，需包含 <<SYS>>…<</SYS>>
-    max_context: int = 8192,
-    max_new_tokens: int = 256,
-    store_dir: str | Path = "./msgs",
-    **gen_kwargs,             # 透传生成参数：do_sample/temperature/top_p/repetition_penalty 等
-) -> Tuple[str, List[Dict[str, str]], str]:
-    """
-    运行一轮对话但不保存。
-    返回: (reply, messages, user_content_this_turn)
-    """
-    store = MsgStore(store_dir)
-
-    if mode not in {"new", "continue", "load"}:
-        raise ValueError("mode 必须是 'new' | 'continue' | 'load'")
-
-    if mode == "new":
-        if not persona:
-            raise ValueError("mode='new' 时必须提供 persona（含 <<SYS>>…<</SYS>>）")
-        messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
-
-    elif mode == "continue":
-        if not messages:
-            if persona:
-                # 没有现成会话但给了 persona，则视作新会话
-                messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
-                mode = "new"
-            else:
-                raise ValueError("mode='continue' 需要传入非空 messages，或改用 mode='new' 并提供 persona")
-        else:
-            messages.append({"role": "user", "content": user_prompt})
-
-    elif mode == "load":
-        messages = store.load_trimmed()
-        if not messages:
-            if not persona:
-                raise ValueError("磁盘没有可加载的会话，且未提供 persona 以新建。")
-            messages = [{"role": "user", "content": f"{persona}\n\n{user_prompt}".strip()}]
-            mode = "new"   # 实际上是新开
-        else:
-            messages.append({"role": "user", "content": user_prompt})
-
-    # 裁剪 → 渲染 → 生成
-    prompt_budget = max_context - max_new_tokens
-    messages = trim_by_tokens(tok, messages, prompt_budget)
-    text = render(tok, messages)
-    out = pipe(
-        text,
-        max_new_tokens=max_new_tokens,
-        return_full_text=False,
-        clean_up_tokenization_spaces=False,
-        **gen_kwargs,
-    )
-    reply = out[0]["generated_text"].strip()
-
-    # 追加 assistant，二次裁剪
-    messages.append({"role": "assistant", "content": reply})
-    messages = trim_by_tokens(tok, messages, prompt_budget)
-
-    return reply, messages, mode
-
 # ============ 显式保存（手动调用才落盘） ============
 def persist_messages(
     messages: List[Dict[str, str]],
@@ -172,7 +124,7 @@ def persist_messages(
     archive_last_turn: bool = True,
 ) -> None:
     store = MsgStore(store_dir)
-    _ensure_alternating(messages)
+    # _ensure_alternating(messages)
 
     # 1) 覆写 trimmed.json（原子）
     store.save_trimmed(messages)

@@ -1,0 +1,6 @@
+{"ts": "2025-10-21T16:27:24.036450+00:00", "role": "user", "content": "hello"}
+{"ts": "2025-10-21T16:27:24.042898+00:00", "role": "assistant", "content": ""}
+{"ts": "2025-10-21T16:27:37.496749+00:00", "role": "user", "content": "who are you"}
+{"ts": "2025-10-21T16:27:37.502732+00:00", "role": "assistant", "content": "I am Nova, an AI designed to assist with information and tasks. How can I help you today?"}
+{"ts": "2025-10-21T16:29:53.070415+00:00", "role": "user", "content": "summarize transformer"}
+{"ts": "2025-10-21T16:29:53.084367+00:00", "role": "assistant", "content": "Transformer models are a type of neural network architecture that have been widely used for natural language processing tasks. They are based on the attention mechanism, which allows the model to focus on different parts of the input sequence when making predictions. This makes them particularly effective for tasks such as machine translation, text summarization, and question answering."}
