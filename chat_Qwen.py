@@ -18,7 +18,8 @@ from typing import List, Dict, Tuple, Optional
 from utils import render, trim_by_tokens, mk_msg_dir, _as_dir, msg2hist, persist_messages
 
 if gr.NO_RELOAD:
-    local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5Coder1_5B_Instruct"
+    # local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5Coder1_5B_Instruct"
+    local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5_0.5B_Instruct_GPTQ_Int4"
     tok = AutoTokenizer.from_pretrained(local_dir, use_fast=True, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=True) #,torch_dtype=torch.bfloat16
     tok.pad_token = tok.eos_token
@@ -34,8 +35,8 @@ assistant_name = "Nova";
 user_name = "Marshall"
 persona = f"""
 - Your name is {assistant_name}.
-- The user's name is {user_name}.
-- Do NOT prefix with "Q:" or "A:"..
+- Address the user as "{user_name}" when appropriate.
+- Do NOT prefix.
 - Output Markdown; code in fenced blocks with a language tag.
 - Answer concisely, but do return give empty feedback.
 """.strip()
@@ -133,7 +134,6 @@ def chat_step(
     # 追加 assistant，二次裁剪
     messages.append({"role": "assistant", "content": reply})
     messages = trim_by_tokens(tok, messages, prompt_budget)
-
     return reply, messages, mode
 
 # ============ UI ============

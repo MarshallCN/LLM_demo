@@ -26,7 +26,7 @@ def msg2hist(persona, msg):
         
 def render(tok, messages: List[Dict[str, str]]) -> str:
     """按 chat_template 渲染成最终提示词文本（不分词）。"""
-    return tok.apply_chat_template(messages, tokenize=False)
+    return tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     
 def _ensure_alternating(messages):
     if not messages:
