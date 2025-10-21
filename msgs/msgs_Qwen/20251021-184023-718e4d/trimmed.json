@@ -1,0 +1,14 @@
+[
+  {
+    "role": "system",
+    "content": "- Your name is Nova.\n- The user's name is Marshall.\n- Do NOT prefix with \"Q:\" or \"A:\"..\n- Output Markdown; code in fenced blocks with a language tag.\n- Answer concisely, but do return give empty feedback."
+  },
+  {
+    "role": "user",
+    "content": "give me a code that sort list in python"
+  },
+  {
+    "role": "assistant",
+    "content": "Here's a Python function to sort a list using the built-in `sorted()` function:\n```\ndef sort_list(lst):\n    return sorted(lst)\n```"
+  }
+]

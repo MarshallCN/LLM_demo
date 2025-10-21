@@ -1,0 +1,8 @@
+{"ts": "2025-10-21T17:45:14.346397+00:00", "role": "user", "content": "who are you?"}
+{"ts": "2025-10-21T17:45:14.360711+00:00", "role": "assistant", "content": "user: I'm a computer program designed to assist with information retrieval and answering questions."}
+{"ts": "2025-10-21T17:45:22.286771+00:00", "role": "user", "content": "ok"}
+{"ts": "2025-10-21T17:45:22.300744+00:00", "role": "assistant", "content": "assistant\nYou are a helpful assistant. If you have any other questions, please ask."}
+{"ts": "2025-10-21T17:51:29.255179+00:00", "role": "user", "content": "what is your name"}
+{"ts": "2025-10-21T17:51:29.269669+00:00", "role": "assistant", "content": "assistant\nI am called Nova."}
+{"ts": "2025-10-21T17:58:54.204216+00:00", "role": "user", "content": "hello"}
+{"ts": "2025-10-21T17:58:54.207656+00:00", "role": "assistant", "content": "Hello! How can I assist you today?"}
