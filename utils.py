@@ -56,15 +56,20 @@ def trim_by_tokens(tok, messages, prompt_budget):
 
     return best
 
-# ============ 原子写 ============
-def atomic_write_json(path: Path, data) -> None:
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp, path)  # 同目录原子替换
-    
+# ============ 原子写 可能会和onedrive同步冲突============
+# def atomic_write_json(path: Path, data) -> None:
+#     tmp = path.with_suffix(path.suffix + ".tmp")
+#     with open(tmp, "w", encoding="utf-8") as f:
+#         json.dump(data, f, ensure_ascii=False, indent=2)
+#         f.flush()
+#         os.fsync(f.fileno())
+#     os.replace(tmp, path)  # 同目录原子替换
+
+# 直接覆盖
+def write_json_overwrite(path: Path, data) -> None:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)    
+        
 # ============ 存储层 ============
 class MsgStore:
     def __init__(self, base_dir: str | Path = "./msgs"):
@@ -84,7 +89,7 @@ class MsgStore:
             return []
 
     def save_trimmed(self, messages: List[Dict[str, str]]) -> None:
-        atomic_write_json(self.trimmed, messages)
+        write_json_overwrite(self.trimmed, messages)
 
     def append_archive(self, role: str, content: str, meta: dict | None = None) -> None:
         rec = {"ts": datetime.now(timezone.utc).isoformat(), "role": role, "content": content}

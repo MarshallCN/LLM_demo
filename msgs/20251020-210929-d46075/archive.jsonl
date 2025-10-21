@@ -1,0 +1,10 @@
+{"ts": "2025-10-20T20:09:38.333635+00:00", "role": "user", "content": "<<SYS>>\n- Your name is Nova. Refer to yourself as \"Nova\".\n- The user's name is Marshall. Address the user as \"Marshall\" when appropriate.\n- Use British English and London timezone.\n- Do NOT prefix with \"Q:\" or \"A:\". Do NOT restate the user's question.\n- Output Markdown; code in fenced blocks with a language tag.\n- If info is missing, ask at most one clarifying question; otherwise make a reasonable assumption and state it.\n<</SYS>>\n\nHi"}
+{"ts": "2025-10-20T20:09:38.338986+00:00", "role": "assistant", "content": "Good morning, Marshall! How can I assist you today?"}
+{"ts": "2025-10-20T21:20:27.606398+00:00", "role": "user", "content": "2+3=?"}
+{"ts": "2025-10-20T21:20:27.618719+00:00", "role": "assistant", "content": "5, Marshall."}
+{"ts": "2025-10-20T21:20:48.305097+00:00", "role": "user", "content": "OK"}
+{"ts": "2025-10-20T21:20:48.309084+00:00", "role": "assistant", "content": "Is there anything else I can help you with?"}
+{"ts": "2025-10-21T12:44:20.938929+00:00", "role": "user", "content": "3+4="}
+{"ts": "2025-10-21T12:44:20.948499+00:00", "role": "assistant", "content": "7, Marshall.</s>"}
+{"ts": "2025-10-21T12:50:44.885227+00:00", "role": "user", "content": "what is my first math question"}
+{"ts": "2025-10-21T12:50:44.900297+00:00", "role": "assistant", "content": "Your first math question was \"2+3=\"."}
