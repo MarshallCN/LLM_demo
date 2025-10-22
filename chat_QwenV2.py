@@ -8,7 +8,7 @@ import logging
 for name in ("accelerate", "accelerate.utils", "accelerate.utils.modeling"):
     logging.getLogger(name).setLevel(logging.ERROR)
     
-import shutil
+import stat, shutil
 import gradio as gr
 from gradio.themes.utils import fonts
 import uuid
@@ -141,7 +141,7 @@ def ui_submit(user_input, messages, msg_id, sessions, sys_prompt,
               temperature, top_p, max_new_tokens, repetition_penalty):
     user_input = (user_input or "").strip()
     # 可视化历史不显示 system（用旧工具函数）
-    chat_history = msg2hist(DEFAULT_SYS_PROMPT, messages)
+    chat_history = msg2hist(sys_prompt, messages)
     if not user_input:
         sessions_update = gr.update(choices=sessions, value=(msg_id or None))
         return gr.update(), messages, chat_history, msg_id, sessions_update, sessions
@@ -208,14 +208,12 @@ def _init_sessions():
         sessions_update = gr.update(choices=sessions, value=msg_id)
         return sessions_update, sessions, msg_id, messages, chat_history
 
-
 def load_session(session_list, sessions):
     msg_id = session_list
     messages = _load_latest(msg_id)
     chat_history = msg2hist(DEFAULT_SYS_PROMPT, messages)
     sessions_update = gr.update(choices=sessions, value=msg_id)
     return msg_id, messages, chat_history, sessions_update
-
 
 def start_new_session(sessions):
     msg_id = mk_msg_dir(BASE_MSG_DIR)
@@ -242,31 +240,10 @@ def delete_session(msg_id, sessions):
     if msg_id:
         path = _as_dir(BASE_MSG_DIR, msg_id)
         if path.exists():
-            try:
-                shutil.rmtree(path)  # 整个目录连同子文件一起删除
-            except Exception:
-                # Windows 只读文件兜底：放宽权限再删
-                try:
-                    for p in path.rglob("*"):
-                        try:
-                            p.chmod(0o666)
-                        except Exception:
-                            pass
-                    shutil.rmtree(path, ignore_errors=True)
-                except Exception:
-                    pass
-
-    # 重新扫描剩余会话
-    sess = [p.name for p in BASE_MSG_DIR.iterdir() if p.is_dir()] if BASE_MSG_DIR.exists() else []
-    sess.sort(reverse=True)
-
-    if sess:
-        new_id = sess[0]
-        messages = _load_latest(new_id)
-        chat_history = msg2hist(DEFAULT_SYS_PROMPT, messages)
-        return messages, chat_history, "", new_id, gr.update(choices=sess, value=new_id), sess
-    else:
-        return [], [], "", "", gr.update(choices=[], value=None), []
+            def _onerror(func, p, exc_info):
+                 os.chmod(p, stat.S_IWRITE)  # 清只读
+            shutil.rmtree(path, onerror=_onerror)  # 只调一次
+    return _init_sessions()
 
 # ===================== UI =====================
 
@@ -344,7 +321,7 @@ with gr.Blocks(theme=theme, css=css) as demo:
     del_btn.click(
         delete_session,
         inputs=[msg_id, sessions],
-        outputs=[messages, chat, user_box, msg_id, session_list, sessions],
+        outputs=[session_list, sessions, msg_id, messages, chat],
     )
     demo.load(_init_sessions, None,
               outputs=[session_list, sessions, msg_id, messages, chat])
