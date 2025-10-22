@@ -1,0 +1,39 @@
+{
+  "os": "Windows-10-10.0.19045-SP0",
+  "python": "CPython 3.10.11",
+  "startedAt": "2025-10-22T15:30:16.216778Z",
+  "program": "C:\\Users\\c1052689\\OneDrive - Newcastle University\\CODE\\LLM\\wandbTest.py",
+  "codePath": "wandbTest.py",
+  "codePathLocal": "wandbTest.py",
+  "git": {
+    "commit": "f5b0fcdaad1c45bf683cbcf5ba6fa8b5d04f428f"
+  },
+  "email": "marshallcnliu@gmail.com",
+  "root": "C:\\Users\\c1052689\\OneDrive - Newcastle University\\CODE\\LLM",
+  "host": "PS-PGR-530914",
+  "executable": "C:\\Users\\c1052689\\py310env\\Scripts\\python.exe",
+  "cpu_count": 10,
+  "cpu_count_logical": 20,
+  "gpu": "NVIDIA RTX A4000",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "1013309239296",
+      "used": "341373349888"
+    }
+  },
+  "memory": {
+    "total": "34054680576"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA RTX A4000",
+      "memoryTotal": "17171480576",
+      "cudaCores": 6144,
+      "architecture": "Ampere",
+      "uuid": "GPU-9f4fd34d-af67-c1f1-8dca-fc51ca411932"
+    }
+  ],
+  "cudaVersion": "12.1",
+  "writerId": "304lxf6kbh4u2vx22cnfauztolhnzcml"
+}

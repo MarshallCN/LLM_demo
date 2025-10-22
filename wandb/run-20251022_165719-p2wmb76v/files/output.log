@@ -1,0 +1,10 @@
+Map: 100%|███████████████████████████████████████████████████████████████████████████| 950/950 [00:00<00:00, 3732.94 examples/s]
+Map: 100%|█████████████████████████████████████████████████████████████████████████████| 50/50 [00:00<00:00, 1276.15 examples/s]
+Traceback (most recent call last):
+  File "C:\Users\c1052689\OneDrive - Newcastle University\CODE\LLM\qwen_qlora_wandb.py", line 68, in <module>
+    args = TrainingArguments(
+TypeError: TrainingArguments.__init__() got an unexpected keyword argument 'evaluation_strategy'
+Traceback (most recent call last):
+  File "C:\Users\c1052689\OneDrive - Newcastle University\CODE\LLM\qwen_qlora_wandb.py", line 68, in <module>
+    args = TrainingArguments(
+TypeError: TrainingArguments.__init__() got an unexpected keyword argument 'evaluation_strategy'

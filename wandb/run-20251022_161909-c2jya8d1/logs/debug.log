@@ -1,0 +1,18 @@
+2025-10-22 16:19:09,984 INFO    MainThread:3208 [wandb_setup.py:_flush():81] Current SDK version is 0.22.2
+2025-10-22 16:19:09,984 INFO    MainThread:3208 [wandb_setup.py:_flush():81] Configure stats pid to 3208
+2025-10-22 16:19:09,984 INFO    MainThread:3208 [wandb_setup.py:_flush():81] Loading settings from C:\Users\c1052689\.config\wandb\settings
+2025-10-22 16:19:09,984 INFO    MainThread:3208 [wandb_setup.py:_flush():81] Loading settings from C:\Users\c1052689\OneDrive - Newcastle University\CODE\LLM\wandb\settings
+2025-10-22 16:19:09,985 INFO    MainThread:3208 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-10-22 16:19:09,985 INFO    MainThread:3208 [wandb_init.py:setup_run_log_directory():705] Logging user logs to C:\Users\c1052689\OneDrive - Newcastle University\CODE\LLM\wandb\run-20251022_161909-c2jya8d1\logs\debug.log
+2025-10-22 16:19:09,985 INFO    MainThread:3208 [wandb_init.py:setup_run_log_directory():706] Logging internal logs to C:\Users\c1052689\OneDrive - Newcastle University\CODE\LLM\wandb\run-20251022_161909-c2jya8d1\logs\debug-internal.log
+2025-10-22 16:19:09,985 INFO    MainThread:3208 [wandb_init.py:monkeypatch_ipython():624] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x0000022B8DCAF0D0>
+2025-10-22 16:19:09,986 INFO    MainThread:3208 [wandb_init.py:init():832] calling init triggers
+2025-10-22 16:19:09,986 INFO    MainThread:3208 [wandb_init.py:init():837] wandb.init called with sweep_config: {}
+config: {'learning_rate': 0.02, 'architecture': 'CNN', 'dataset': 'CIFAR-100', 'epochs': 10, '_wandb': {}}
+2025-10-22 16:19:09,986 INFO    MainThread:3208 [wandb_init.py:init():880] starting backend
+2025-10-22 16:19:15,073 INFO    MainThread:3208 [wandb_init.py:init():883] sending inform_init request
+2025-10-22 16:19:15,114 INFO    MainThread:3208 [wandb_init.py:init():891] backend started and connected
+2025-10-22 16:19:15,122 INFO    MainThread:3208 [wandb_run.py:_label_probe_notebook():1330] probe notebook
+2025-10-22 16:19:15,123 INFO    MainThread:3208 [wandb_run.py:_label_probe_notebook():1340] Unable to probe notebook: 'NoneType' object has no attribute 'get'
+2025-10-22 16:19:15,123 INFO    MainThread:3208 [wandb_init.py:init():961] updated telemetry
+2025-10-22 16:19:16,183 INFO    MainThread:3208 [wandb_init.py:init():985] communicating run to backend with 90.0 second timeout
