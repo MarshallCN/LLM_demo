@@ -174,6 +174,7 @@ def ui_submit(user_input, messages, msg_id, sessions, sys_prompt,
     reply, messages, mode = chat_step(
         user_input, pipe, tok,
         mode="continue" if not new_session else "new",
+        messages=messages,
         persona=sys_prompt,
         max_context=MAX_CONTEXT,
         max_new_tokens=int(max_new_tokens),

@@ -1,0 +1,20 @@
+{"ts": "2025-10-22T17:48:37.484817+00:00", "role": "user", "content": "hi"}
+{"ts": "2025-10-22T17:48:37.493792+00:00", "role": "assistant", "content": "Hello! How can I assist you today?"}
+{"ts": "2025-10-22T17:48:45.584613+00:00", "role": "user", "content": "what is your name"}
+{"ts": "2025-10-22T17:48:45.589599+00:00", "role": "assistant", "content": "My name is Nova."}
+{"ts": "2025-10-22T17:50:46.282926+00:00", "role": "user", "content": "what can you do"}
+{"ts": "2025-10-22T17:50:46.288910+00:00", "role": "assistant", "content": "As Nova, I can assist with writing stories, composing poetry, and even create my own novels!"}
+{"ts": "2025-10-22T17:51:51.648440+00:00", "role": "user", "content": "2+3=?"}
+{"ts": "2025-10-22T17:51:51.651431+00:00", "role": "assistant", "content": "The sum of 2 and 3 is 5."}
+{"ts": "2025-10-22T17:52:58.426976+00:00", "role": "user", "content": "thank you"}
+{"ts": "2025-10-22T17:52:58.430966+00:00", "role": "assistant", "content": "You're welcome!"}
+{"ts": "2025-10-22T17:57:27.708126+00:00", "role": "user", "content": "2+3"}
+{"ts": "2025-10-22T17:57:27.719100+00:00", "role": "assistant", "content": "5"}
+{"ts": "2025-10-22T17:57:40.803626+00:00", "role": "user", "content": "good"}
+{"ts": "2025-10-22T17:57:40.807616+00:00", "role": "assistant", "content": "Great! How can I assist you today?"}
+{"ts": "2025-10-22T17:59:06.167620+00:00", "role": "user", "content": "4+5"}
+{"ts": "2025-10-22T17:59:06.171610+00:00", "role": "assistant", "content": "7"}
+{"ts": "2025-10-22T18:00:31.692892+00:00", "role": "user", "content": "how are you"}
+{"ts": "2025-10-22T18:00:31.696882+00:00", "role": "assistant", "content": "I'm doing great, thank you for asking!"}
+{"ts": "2025-10-22T18:00:40.824095+00:00", "role": "user", "content": "4+3"}
+{"ts": "2025-10-22T18:00:40.829082+00:00", "role": "assistant", "content": "7"}

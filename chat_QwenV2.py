@@ -39,9 +39,7 @@ assistant_name = "Nova"
 user_name = "Marshall"
 # 单行默认 persona（节省 token）
 DEFAULT_SYS_PROMPT = (
-    f"Your name is {assistant_name}; address the user as \"{user_name}\" when appropriate; "
-    "no Q:/A: prefixes; use Markdown; fence code with a language tag; "
-    "be concise but substantive; British English (Europe/London)."
+    f"Your name is {assistant_name}; address the user as {user_name} when appropriate; no Q:/A: prefixes; use Markdown; fence code with a language tag; Be concise but substantive."
 )
 
 # 仅作为初始值；真正的生成参数来自 UI 的滑块
@@ -76,17 +74,17 @@ css = """
 
 # ============ Chat core ============
 
-def _ensure_system(messages: Optional[List[Dict[str, str]]], sys_prompt: str) -> List[Dict[str, str]]:
-    """确保第一个消息是系统提示，并与当前文本框一致。"""
-    sys_prompt = (sys_prompt or DEFAULT_SYS_PROMPT).strip()
-    if not messages:
-        return [{"role": "system", "content": sys_prompt}]
-    messages = list(messages)
-    if messages[0].get("role") != "system":
-        messages.insert(0, {"role": "system", "content": sys_prompt})
-    else:
-        messages[0] = {"role": "system", "content": sys_prompt}
-    return messages
+# def _ensure_system(messages: Optional[List[Dict[str, str]]], sys_prompt: str) -> List[Dict[str, str]]:
+#     """确保第一个消息是系统提示，并与当前文本框一致。"""
+#     sys_prompt = (sys_prompt or DEFAULT_SYS_PROMPT).strip()
+#     if not messages:
+#         return [{"role": "system", "content": sys_prompt}]
+#     messages = list(messages)
+#     if messages[0].get("role") != "system":
+#         messages.insert(0, {"role": "system", "content": sys_prompt})
+#     else:
+#         messages[0] = {"role": "system", "content": sys_prompt}
+#     return messages
 
 
 def chat_step(
@@ -115,7 +113,10 @@ def chat_step(
     elif mode in {"continue", "load"}:
         if not messages:
             messages = [{"role": "system", "content": persona or DEFAULT_SYS_PROMPT}]
+            print('not mesaage')
         messages.append({"role": "user", "content": user_prompt})
+        print('append')
+    print(messages)
 
     # 裁剪 → 渲染 → 生成
     prompt_budget = max_context - max_new_tokens
@@ -147,7 +148,7 @@ def ui_submit(user_input, messages, msg_id, sessions, sys_prompt,
         return gr.update(), messages, chat_history, msg_id, sessions_update, sessions
 
     # 统一维护 system
-    messages = _ensure_system(messages, sys_prompt)
+    # messages = _ensure_system(messages, sys_prompt)
 
     # 会话 ID 维护
     msg_id = msg_id if msg_id else ""
@@ -169,13 +170,14 @@ def ui_submit(user_input, messages, msg_id, sessions, sys_prompt,
 
     reply, messages, mode = chat_step(
         user_input, pipe, tok,
-        mode="continue" if not new_session else "new",
+        mode="continue" if not new_session else "new", 
+        messages=messages,
         persona=sys_prompt,
         max_context=MAX_CONTEXT,
         max_new_tokens=int(max_new_tokens),
         **gen_cfg,
     )
-
+    print(mode)
     if len(messages) > 0:
         msg_dir = _as_dir(BASE_MSG_DIR, msg_id)
         persist_messages(messages, msg_dir, archive_last_turn=True)
