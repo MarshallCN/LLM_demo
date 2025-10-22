@@ -1,4 +1,4 @@
-# === Qwen 2.5 Coder 1.5B =========================
+# === Qwen 2.5 Coder 1.5B or 0.5B =========================
 import os
 os.environ["TORCHDYNAMO_DISABLE"] = "1"
 os.environ["TORCHINDUCTOR_DISABLE"] = "1"
@@ -17,31 +17,37 @@ from datetime import datetime, timezone
 from typing import List, Dict, Tuple, Optional
 from utils import render, trim_by_tokens, mk_msg_dir, _as_dir, msg2hist, persist_messages
 
+# ===================== Model (optional local load) =====================
 if gr.NO_RELOAD:
     # local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5Coder1_5B_Instruct"
     local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5_0.5B_Instruct_GPTQ_Int4"
     tok = AutoTokenizer.from_pretrained(local_dir, use_fast=True, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=True) #,torch_dtype=torch.bfloat16
+    model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=True) # ,torch_dtype=torch.bfloat16
     tok.pad_token = tok.eos_token
     tok.padding_side = "left"
     model.config.pad_token_id = tok.eos_token_id
     model.generation_config.pad_token_id = tok.eos_token_id
-    
+
     pipe = pipeline("text-generation", model=model, tokenizer=tok)
 
+# ===================== Defaults =====================
 MAX_CONTEXT = 2048 #8192
 GEN_BUDGET  = 256
 assistant_name = "Nova"; 
 user_name = "Marshall"
-persona = f"""
-- Your name is {assistant_name}.
-- Address the user as "{user_name}" when appropriate.
-- Do NOT prefix.
-- Output Markdown; code in fenced blocks with a language tag.
-- Answer concisely, but do return give empty feedback.
+persona = f"""Your name is {assistant_name}. Address the user as "{user_name}" when appropriate. Do not add "Q:"/"A:" prefixes. Output Markdown; code in fenced blocks with a language tag. Be concise but never give empty feedback.
 """.strip()
-# ===============================================================
-# from __future__ import annotations
+
+GEN_KWARGS = dict(
+    do_sample=True,
+    temperature=0.6,
+    top_p=0.9,
+    repetition_penalty=1.05,
+    max_context=MAX_CONTEXT, 
+    max_new_tokens=GEN_BUDGET
+)
+
+BASE_MSG_DIR = Path("./msgs/msgs_Qwen") 
 
 theme = gr.themes.Soft(
     font=[
@@ -60,18 +66,6 @@ css = """
 #user_box textarea::-webkit-scrollbar { display: none; }      /* Chrome/Safari */
 #user_box textarea { scrollbar-width: none; -ms-overflow-style: none; } /* Firefox/Edge */
 """
-
-GEN_KWARGS = dict(
-    do_sample=True,
-    temperature=0.5,
-    top_p=0.9,
-    repetition_penalty=1.05,
-    max_context=MAX_CONTEXT, 
-    max_new_tokens=GEN_BUDGET
-)
-
-BASE_MSG_DIR = Path("./msgs/msgs_Qwen") 
-
 # ============ Chat ============
 def chat_step(
     user_prompt: str,
