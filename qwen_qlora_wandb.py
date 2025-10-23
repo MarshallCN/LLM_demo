@@ -1,10 +1,9 @@
 # qwen_0p5b_qlora_wandb.py
 import os, math, torch, wandb
 from datasets import load_dataset
-from transformers import (AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig,
-                          TrainingArguments, EarlyStoppingCallback)
+from transformers import (AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, EarlyStoppingCallback)
 from peft import LoraConfig
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 
 # ====== 0) W&B 运行信息（改成你的项目/实体）======
 WANDB_PROJECT = "qwen-mini-platypus"
@@ -22,11 +21,11 @@ MODEL_ID = "Qwen2.5-0.5B-Instruct"
 MODEL_DIR = r"C:\Users\c1052689\hug_models\Qwen2.5-0.5B-Instruct"  # 本地模型目录
 
 raw = load_dataset("mlabonne/mini-platypus", split="train")
-raw = raw.train_test_split(test_size=0.05, seed=42)
+raw = raw.train_test_split(test_size=0.1, seed=42)
 train_raw, val_raw = raw["train"], raw["test"]
 
 tok = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=False, local_files_only=True)
-
+    
 def to_chat_text(ex):
     instr = ex.get("instruction", "")
     inp   = ex.get("input", "") or ""
@@ -56,27 +55,29 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
     local_files_only=True
 )
-
+model.config.use_cache = False
 # ====== 3) LoRA 配置 ======
 peft_cfg = LoraConfig(
-    r=16, lora_alpha=32, lora_dropout=0.05, bias="none",
-    target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"],
+    r=8, lora_alpha=16, lora_dropout=0.05, bias="none",
+    # target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"],
+    target_modules=["q_proj","k_proj","v_proj","o_proj"],  # 先只训注意力投影
     task_type="CAUSAL_LM",
 )
 
 # ====== 4) 训练参数（报告到 wandb）======
-args = TrainingArguments(
+args = SFTConfig(
     output_dir="qwen0.5b-mini-platypus-qlora",
     num_train_epochs=2,
-    per_device_train_batch_size=8,
-    gradient_accumulation_steps=2,
+    per_device_train_batch_size=1,
+    gradient_accumulation_steps=16,
     learning_rate=2e-4,
     lr_scheduler_type="cosine",
     warmup_ratio=0.1,
     weight_decay=0.01,
     logging_steps=10,
     save_strategy="epoch",
-    evaluation_strategy="epoch",
+    eval_strategy="epoch",
+    # 可选：logging_strategy="steps"  # 需要按 epoch 记录时可改为 "epoch"
     bf16=True,                         # 若显卡不支持 BF16，改用 fp16=True
     gradient_checkpointing=True,
     optim="paged_adamw_8bit",
@@ -89,15 +90,15 @@ args = TrainingArguments(
 
 trainer = SFTTrainer(
     model=model,
-    tokenizer=tok,
     peft_config=peft_cfg,
     train_dataset=train_ds,
     eval_dataset=val_ds,
     dataset_text_field="text",
-    max_seq_length=2048,
-    packing=True,
+    max_seq_length=1024,
+    packing=False,
     args=args,
     callbacks=[EarlyStoppingCallback(early_stopping_patience=1)],  # 可选早停，避免小数据过拟合
+    processing_class=tok,           # ← 新参数名
 )
 
 # 将关键超参记录到 W&B（可选）
