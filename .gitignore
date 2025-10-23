@@ -8,3 +8,5 @@
 *$py.class
 /old/
 /old/*
+/data/*
+/wandb/*
