@@ -10,3 +10,12 @@
 /old/*
 /data/*
 /wandb/*
+
+# local files
+.vscode/
+exports/
+temp_docs/
+msgs/**
+vectorstore/**
+!vectorstore/.gitkeep
+!msgs/.gitkeep
