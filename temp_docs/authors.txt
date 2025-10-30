@@ -1,0 +1,19 @@
+**Name:** Zehao (Marshall) Liu
+**Current role:** PhD candidate in Computer Science, Newcastle University, UK (previously at the University of Reading); expected completion 2025
+**Thesis:** *Relation-aware Hashing for Scalable Multi-modal Recommender Systems*
+**Supervisors:** Dr Huizhi Liang, Dr Varun Ojha
+
+**Research focus:**
+Zehao works on scalable, explainable recommender systems over heterogeneous information networks (HINs). His work integrates multi-modal signals—text, images, and temporal patterns—using metapath-aware and relation-aware hashing to enable fast similarity search and recommendation with clear, interpretable paths. He also explores vector databases, LSH/MinHash families, multi-hop reasoning on HINs, and evaluation at scale (MAP/MAR/NDCG).
+
+**Publications:**
+Co-author of 8 peer-reviewed papers spanning venues such as CIKM, LOD, SemEval, and AusDM, covering topics in recommendation, information retrieval, NLP evaluation, and applied data mining.
+
+**Broader interests:**
+Practical LLM fine-tuning (PEFT/LoRA/QLoRA), deployment and inference on constrained GPUs, RAG pipelines with FAISS, prompt engineering and reranking, as well as adversarial ML and computer vision (e.g., YOLO, FGSM/PGD), including federated learning demos.
+
+**Tooling & skills:**
+Python, PyTorch, Transformers; IR & similarity search; graph/HIN modeling; database systems (PostgreSQL/MySQL/Neo4j/Redis); data analysis and visualization; reproducible pipelines and experiment automation on GPU hardware.
+
+**Ongoing directions:**
+Multi-modal hashing that fuses visual, textual, and temporal features for fast retrieval on large HINs; explainable recommendation via metapaths; efficient LLM-RAG systems using compact adapters and vector stores.

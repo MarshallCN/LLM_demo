@@ -1,0 +1,5 @@
+{
+    "python.defaultInterpreterPath": "C:/Users/c1052689/py310env/Scripts/python.exe",
+    // "python.defaultInterpreterPath": "C:/Users/c1052689/venv-perf/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true
+}

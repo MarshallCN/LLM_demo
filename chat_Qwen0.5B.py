@@ -1,4 +1,4 @@
-# === Qwen 2.5 Coder 1.5B or 0.5B =========================
+# === Qwen 2.5 Coder 1.5B or 0.5B GTQ_Int4 =========================
 # 增加参数选择，删除
 import os
 os.environ["TORCHDYNAMO_DISABLE"] = "1"
@@ -23,6 +23,7 @@ from utils import render, trim_by_tokens, mk_msg_dir, _as_dir, msg2hist, persist
 if gr.NO_RELOAD:
     # local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5Coder1_5B_Instruct"
     local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5_0.5B_Instruct_GPTQ_Int4"
+    # local_dir = r"C:\Users\c1052689\hug_models\Qwen2.5-0.5B-Instruct" # full model no Q
     tok = AutoTokenizer.from_pretrained(local_dir, use_fast=True, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(local_dir, device_map="auto", trust_remote_code=True) # ,torch_dtype=torch.bfloat16
     tok.pad_token = tok.eos_token

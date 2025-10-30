@@ -34,5 +34,37 @@
   {
     "role": "assistant",
     "content": "Hello! How can I assist you today?"
+  },
+  {
+    "role": "user",
+    "content": "HELLO"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How may I assist you today?"
+  },
+  {
+    "role": "user",
+    "content": "GIVE ME A PYTHON CODE"
+  },
+  {
+    "role": "assistant",
+    "content": "Sure, here's a simple Python code that greets the user by name:\n```python\nprint(\"Hello, my friend!\")\n```\nYou can run this code in your Python environment to see the output."
+  },
+  {
+    "role": "user",
+    "content": "HI"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How may I assist you today?"
+  },
+  {
+    "role": "user",
+    "content": "GIVE ME A CODE"
+  },
+  {
+    "role": "assistant",
+    "content": "Sure, here's a simple Python code that greets the user by name:\n```python\nprint(\"Hello, my friend!\")\n```\nYou can run this code in your Python environment to see the output."
   }
 ]

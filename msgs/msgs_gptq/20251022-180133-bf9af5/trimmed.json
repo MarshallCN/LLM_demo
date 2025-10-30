@@ -14,5 +14,13 @@
   {
     "role": "assistant",
     "content": "You're welcome! If you have any other questions, feel free to ask!"
+  },
+  {
+    "role": "user",
+    "content": "HOW ARE YOU"
+  },
+  {
+    "role": "assistant",
+    "content": "I am an AI language model and do not have feelings or emotions. I am simply here to help you with any questions or tasks you may have. Is there something specific you would like to ask or learn more about?"
   }
 ]
